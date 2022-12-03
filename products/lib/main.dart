@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Products',
       theme: ThemeApp.lightTheme,
-      initialRoute: RoutesApp.home,
+      initialRoute: RoutesApp.login,
       routes: RoutesApp.routes,
     );
   }
