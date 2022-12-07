@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:products/providers/login_provider.dart';
 import 'package:products/routes/routes_app.dart';
 import 'package:products/screens/screens.dart';
@@ -32,78 +33,76 @@ class LoginScreen extends StatelessWidget {
                       style: Theme.of(context).textTheme.headline4,
                     ),
                     SizedBox(height: size.height * 0.02),
-                    Container(
-                      child: Form(
-                        key: loginForm.loginFormKey,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        child: Column(
-                          children: [
-                            CustomInput(
-                              hint: 'Carlos@gamil.com',
-                              icon: Icons.alternate_email,
-                              label: "Email",
-                              onChanged: (value) => loginForm.email = value,
-                              validator: (value) {
-                                String pattern =
-                                    r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{3,}))$';
-                                RegExp regExp = RegExp(pattern);
+                    Form(
+                      key: loginForm.loginFormKey,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      child: Column(
+                        children: [
+                          CustomInput(
+                            hint: 'Carlos@gamil.com',
+                            icon: Icons.alternate_email,
+                            label: "Email",
+                            onChanged: (value) => loginForm.email = value,
+                            validator: (value) {
+                              String pattern =
+                                  r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{3,}))$';
+                              RegExp regExp = RegExp(pattern);
 
-                                return regExp.hasMatch(value ?? "")
+                              return regExp.hasMatch(value ?? "")
+                                  ? null
+                                  : "The Email is not well";
+                            },
+                          ),
+                          SizedBox(height: size.height * 0.02),
+                          CustomInput(
+                            hint: '********',
+                            icon: Icons.lock,
+                            isPassword: true,
+                            label: "Password",
+                            onChanged: (value) => loginForm.pass = value,
+                            validator: (value) =>
+                                value != null && value.length >= 6
                                     ? null
-                                    : "The Email is not well";
-                              },
-                            ),
-                            SizedBox(height: size.height * 0.02),
-                            CustomInput(
-                              hint: '********',
-                              icon: Icons.lock,
-                              isPassword: true,
-                              label: "Password",
-                              onChanged: (value) => loginForm.pass = value,
-                              validator: (value) =>
-                                  value != null && value.length >= 6
-                                      ? null
-                                      : "The password is not well",
-                            ),
-                            SizedBox(height: size.height * 0.03),
-                            SizedBox(
-                              width: double.infinity,
-                              child: MaterialButton(
-                                onPressed: loginForm.isLoading
-                                    ? null
-                                    : () async {
-                                        FocusScope.of(context).unfocus();
+                                    : "The password is not well",
+                          ),
+                          SizedBox(height: size.height * 0.03),
+                          SizedBox(
+                            width: double.infinity,
+                            child: MaterialButton(
+                              onPressed: loginForm.isLoading
+                                  ? null
+                                  : () async {
+                                      FocusScope.of(context).unfocus();
 
-                                        if (!loginForm.isValidForm()) return;
+                                      if (!loginForm.isValidForm()) return;
 
-                                        loginForm.isLoading = true;
+                                      loginForm.isLoading = true;
 
-                                        await Future.delayed(
-                                            const Duration(seconds: 2));
-                                            
-                                        loginForm.isLoading = false;
+                                      await Future.delayed(
+                                          const Duration(seconds: 2));
 
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.pushReplacementNamed(
-                                            context, RoutesApp.home);
-                                      },
-                                disabledColor: Colors.grey,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 15, horizontal: 40),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(100),
-                                ),
-                                color: Colors.deepPurple,
-                                child: Text(
-                                  !loginForm.isLoading
-                                      ? "Login"
-                                      : "Wait a second",
-                                  style: const TextStyle(color: Colors.white),
-                                ),
+                                      loginForm.isLoading = false;
+
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.pushReplacementNamed(
+                                          context, RoutesApp.home);
+                                    },
+                              disabledColor: Colors.grey,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 15, horizontal: 40),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(100),
                               ),
-                            )
-                          ],
-                        ),
+                              color: Colors.deepPurple,
+                              child: Text(
+                                !loginForm.isLoading
+                                    ? "Login"
+                                    : "Wait a second",
+                                style: const TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
                     )
                   ],
@@ -145,6 +144,8 @@ class CustomInput extends StatelessWidget {
   final bool isPassword;
   final Function(String)? onChanged;
   final String? Function(String?)? validator;
+  final String? initialValue;
+  final List<TextInputFormatter>? inputFormatters;
   const CustomInput({
     Key? key,
     required this.label,
@@ -153,11 +154,15 @@ class CustomInput extends StatelessWidget {
     this.onChanged,
     this.isPassword = false,
     this.validator,
+    this.initialValue,
+    this.inputFormatters,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      inputFormatters: inputFormatters,
+      initialValue: initialValue,
       obscureText: isPassword,
       onChanged: onChanged,
       validator: validator,
