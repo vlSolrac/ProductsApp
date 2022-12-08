@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:products/providers/login_provider.dart';
 import 'package:products/routes/routes_app.dart';
-import 'package:products/services/product_service.dart';
+import 'package:products/services/products_service.dart';
 import 'package:products/theme/theme_app.dart';
 import 'package:provider/provider.dart';
 
@@ -14,10 +13,7 @@ class AppState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => LoginProvider()),
-        ChangeNotifierProvider(create: (_) => ProductService())
-      ],
+      providers: [ChangeNotifierProvider(create: (_) => ProductsService())],
       child: const MyApp(),
     );
   }
@@ -31,7 +27,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Products',
       theme: ThemeApp.lightTheme,
-      initialRoute: RoutesApp.home,
+      initialRoute: RoutesApp.login,
       routes: RoutesApp.routes,
     );
   }

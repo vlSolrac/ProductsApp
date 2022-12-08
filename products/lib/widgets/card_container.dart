@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
 
 class CardContainer extends StatelessWidget {
+
   final Widget child;
+
   const CardContainer({
-    Key? key,
-    required this.child,
+    Key? key, 
+    required this.child
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // final size = MediaQuery.of(context).size;
-
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric( horizontal: 30 ),
       child: Container(
-        padding: const EdgeInsets.all(16),
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          color: Colors.white,
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 15,
-              offset: Offset(0, 5),
-            ),
-          ],
-        ),
-        child: child,
+          width: double.infinity,
+          padding: EdgeInsets.all( 20 ),
+          decoration: _createCardShape(),
+          child: this.child,
       ),
     );
   }
+
+  BoxDecoration _createCardShape() => BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.circular(25),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black12,
+        blurRadius: 15,
+        offset: Offset(0, 5),
+      )
+    ]
+  );
 }
