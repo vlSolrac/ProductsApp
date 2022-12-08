@@ -40,7 +40,11 @@ class HomeScreen extends StatelessWidget {
             ),
             floatingActionButton: FloatingActionButton(
               child: const Icon(Icons.add),
-              onPressed: () => Navigator.pushNamed(context, RoutesApp.product),
+              onPressed: () {
+                productService.selectedProduct = Product(
+                    avaliable: false, description: "", name: "", price: 0);
+                Navigator.pushNamed(context, RoutesApp.product);
+              },
             ),
           );
   }
@@ -55,6 +59,7 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final productService = Provider.of<ProductService>(context);
     final size = MediaQuery.of(context).size;
 
     return Container(
@@ -194,6 +199,11 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
             ),
+          // IconButton(
+          //     onPressed: () {
+          //       productService.deleteProduct(product);
+          //     },
+          //     icon: const Icon(Icons.delete))
         ],
       ),
     );

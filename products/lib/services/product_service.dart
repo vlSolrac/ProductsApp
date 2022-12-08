@@ -24,6 +24,12 @@ class ProductService extends ChangeNotifier {
     final url = Uri.https(_baseUrl, "Product.json");
 
     final res = await http.get(url);
+    if (res.body == "null") {
+      isLoading = false;
+      notifyListeners();
+      return;
+    }
+    
     final Map<String, dynamic> productMap = json.decode(res.body);
 
     productMap.forEach((key, value) {
@@ -43,21 +49,56 @@ class ProductService extends ChangeNotifier {
     notifyListeners();
 
     if (product.id == null) {
+      await createProduct(product);
     } else {
-      final res = await createProduct(product);
+      final res = await updateProduct(product);
     }
 
     isSaving = false;
     notifyListeners();
   }
 
-  Future<String> createProduct(Product product) async {
+  Future<String> updateProduct(Product product) async {
     final url = Uri.https(_baseUrl, "Product/${product.id}.json");
     final res = await http.put(url, body: product.toJson());
-    final decodeData = res.body;
+
+    final decodeData = jsonDecode(res.body);
+    print(decodeData);
+
+    final index = products.indexWhere((p) => p.id == product.id);
+    products[index] = product;
+
+    return product.id!;
+  }
+
+  Future<String> createProduct(Product product) async {
+    final url = Uri.https(_baseUrl, "Product.json");
+
+    final res = await http.post(url, body: product.toJson());
+
+    final decodeData = json.decode(res.body);
+
+    product.id = decodeData["name"];
+
+    products.add(product);
+
+    return product.id!;
+  }
+
+  Future<String> deleteProduct(Product product) async {
+    final url = Uri.https(_baseUrl, "Product/${product.id}.json");
+
+    final res = await http.delete(url);
+
+    final decodeData = res.reasonPhrase;
 
     print(decodeData);
 
-    return product.id!;
+    // product.id = decodeData["name"];
+
+    // products.add(product);
+    notifyListeners();
+
+    return decodeData!;
   }
 }

@@ -199,7 +199,12 @@ class ProductForm extends StatelessWidget {
                 label: "Price",
                 hint: "\$100.00",
                 icon: Icons.monetization_on_outlined,
-                onChanged: (value) => product.price = double.parse(value),
+                onChanged: (value) {
+                  if (double.tryParse(value) == null) {
+                    return value = '0';
+                  }
+                  return product.price = double.parse(value);
+                },
               ),
               SwitchCustom(active: product.avaliable, product: product),
               const SizedBox(height: 50),
