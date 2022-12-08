@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:products/providers/login_form_provider.dart';
 import 'package:products/routes/routes_app.dart';
+import 'package:products/services/auth_service.dart';
 import 'package:products/ui/input_decorations.dart';
 import 'package:products/widgets/auth_background.dart';
 import 'package:products/widgets/card_container.dart';
@@ -98,16 +99,23 @@ class _LoginForm extends StatelessWidget {
                   : () async {
                       FocusScope.of(context).unfocus();
 
+                      final authServices =
+                          Provider.of<AuthService>(context, listen: false);
+
                       if (!loginForm.isValidForm()) return;
 
                       loginForm.isLoading = true;
 
-                      await Future.delayed(const Duration(seconds: 2));
+                      final String? res = await authServices.createUser(
+                          loginForm.email, loginForm.password);
 
+                      if (res == null)
+                        Navigator.popAndPushNamed(context, RoutesApp.login);
+
+                      print(res);
                       loginForm.isLoading = false;
 
                       // ignore: use_build_context_synchronously
-                      Navigator.pushReplacementNamed(context, 'home');
                     },
               child: Container(
                   padding:
