@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:products/helpers/preferences.dart';
 import 'package:products/models/product.dart';
 
 class ProductsService extends ChangeNotifier {
@@ -23,7 +24,9 @@ class ProductsService extends ChangeNotifier {
     this.isLoading = true;
     notifyListeners();
 
-    final url = Uri.https(_baseUrl, 'Product.json');
+    final url = Uri.https(_baseUrl, 'Product.json',{
+      'auth': Preferences.token
+    });
     final resp = await http.get(url);
 
     final Map<String, dynamic> productsMap = json.decode(resp.body);

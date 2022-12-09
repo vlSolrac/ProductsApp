@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:products/providers/login_form_provider.dart';
 import 'package:products/routes/routes_app.dart';
 import 'package:products/services/auth_service.dart';
+import 'package:products/services/notification_service.dart';
 import 'package:products/ui/input_decorations.dart';
 import 'package:products/widgets/auth_background.dart';
 import 'package:products/widgets/card_container.dart';
@@ -112,10 +113,10 @@ class _LoginForm extends StatelessWidget {
                       if (res == null) {
                         // ignore: use_build_context_synchronously
                         Navigator.popAndPushNamed(context, RoutesApp.home);
+                      } else {
+                        NotificationService.showSnackbar(res);
+                        loginForm.isLoading = false;
                       }
-
-                      print(res);
-                      loginForm.isLoading = false;
                     },
               child: Container(
                   padding:
