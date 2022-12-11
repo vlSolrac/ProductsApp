@@ -7,7 +7,7 @@ import 'package:products/helpers/preferences.dart';
 import 'package:products/models/product.dart';
 
 class ProductsService extends ChangeNotifier {
-  final String _baseUrl = "productsapp-57a00-default-rtdb.firebaseio.com";  
+  final String _baseUrl = "productsapp-57a00-default-rtdb.firebaseio.com";
   final List<Product> products = [];
   late Product selectedProduct;
 
@@ -17,16 +17,15 @@ class ProductsService extends ChangeNotifier {
   bool isSaving = false;
 
   ProductsService() {
-    this.loadProducts();
+    loadProducts();
   }
 
   Future<List<Product>> loadProducts() async {
-    this.isLoading = true;
+    isLoading = true;
     notifyListeners();
 
-    final url = Uri.https(_baseUrl, 'Product.json',{
-      'auth': Preferences.token
-    });
+    final url =
+        Uri.https(_baseUrl, 'Product.json', {'auth': Preferences.token});
     final resp = await http.get(url);
 
     final Map<String, dynamic> productsMap = json.decode(resp.body);
@@ -34,13 +33,13 @@ class ProductsService extends ChangeNotifier {
     productsMap.forEach((key, value) {
       final tempProduct = Product.fromMap(value);
       tempProduct.id = key;
-      this.products.add(tempProduct);
+      products.add(tempProduct);
     });
 
-    this.isLoading = false;
+    isLoading = false;
     notifyListeners();
 
-    return this.products;
+    return products;
   }
 
   Future<String> deleteProduct(Product product) async {
@@ -66,10 +65,10 @@ class ProductsService extends ChangeNotifier {
 
     if (product.id == null) {
       // Es necesario crear
-      await this.createProduct(product);
+      await createProduct(product);
     } else {
       // Actualizar
-      await this.updateProduct(product);
+      await updateProduct(product);
     }
 
     isSaving = false;
@@ -82,9 +81,8 @@ class ProductsService extends ChangeNotifier {
     final decodedData = resp.body;
 
     //TODO: Actualizar el listado de productos
-    final index =
-        this.products.indexWhere((element) => element.id == product.id);
-    this.products[index] = product;
+    final index = products.indexWhere((element) => element.id == product.id);
+    products[index] = product;
 
     return product.id!;
   }
@@ -96,22 +94,22 @@ class ProductsService extends ChangeNotifier {
 
     product.id = decodedData['name'];
 
-    this.products.add(product);
+    products.add(product);
 
     return product.id!;
   }
 
   void updateSelectedProductImage(String path) {
-    this.selectedProduct.picture = path;
-    this.newPictureFile = File.fromUri(Uri(path: path));
+    selectedProduct.picture = path;
+    newPictureFile = File.fromUri(Uri(path: path));
 
     notifyListeners();
   }
 
   Future<String?> uploadImage() async {
-    if (this.newPictureFile == null) return null;
+    if (newPictureFile == null) return null;
 
-    this.isSaving = true;
+    isSaving = true;
     notifyListeners();
 
     final url = Uri.parse(
@@ -133,7 +131,7 @@ class ProductsService extends ChangeNotifier {
       return null;
     }
 
-    this.newPictureFile = null;
+    newPictureFile = null;
 
     final decodedData = json.decode(resp.body);
     return decodedData['secure_url'];
